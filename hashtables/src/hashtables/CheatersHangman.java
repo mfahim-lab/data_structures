@@ -18,7 +18,7 @@ public class CheatersHangman {
     int wordLength;
     int totalGuesses;
     int letterCount;
-    HashSet <String> wordMaster = new HashSet<String>(); //contains all words in dict.
+    static HashSet <String> wordMaster = new HashSet<String>(); //contains all words in dict.
     List <String> allWords = new ArrayList<String>();
     
     
@@ -28,49 +28,83 @@ public class CheatersHangman {
         this.totalGuesses = totalGuesses;
     }
 
-	
-	
-	
-	
-	public static boolean gameisRunning() {
+
+	public static boolean gameisRunning(int totalGuesses) {
 		//check to see if there are guesses left 
-		
-		
+		if(totalGuesses>0){
+			return true;
+		}
 		
 		return false;
 	}
 	//(List<String> wordList, Set<Character> guessLetters) //rosens paramater suggestion
-	public Map<String, List<String>> getWordFamilies(String guessedLetters){
+	public static Map<String, List<String>> getWordFamilies(String guessedLetters, char x){
 		//given a word list, you will modify and replace it
-		int numOfGuessesInString = guessedLetters.length();
-		for(int i = 0; i < numOfGuessesInString; i++) {
-			char currentChar = guessedLetters.charAt(i);
-		} //might have to merge but later 
+		
+		Iterator <String> wordIterator = wordMaster.iterator();
+		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+		
 		
 		for(String item : wordMaster) {
 				
+			item = wordIterator.next();
+			String family = item;
 			
+			for(int j = 0; j < family.length(); j++){
+                if(family.charAt(j) != x){
+                    family = family.replace(family.charAt(j),'-');
+                }
+            }
 			
-			
-			
-			
-			
-			
+		    if(!map.containsKey(family)){
+                List <String> valueList = new ArrayList <String>();
+                map.put(family,valueList); //predefined functions
+                map.get(family).add(item);
+            }
+            else{
+                map.get(family).add(item);
+            }
+      
 		}
-		
-		
-		
-		
-		
-		
-		
-		return null;
-		
+	
+	    return map;
 	}
 	
-	public static String getBestFamily(Map<String, List<String>> wordFamilies) {
+	public static HashSet <String> getBestFamily(Map<String, List<String>> wordFamilies, char x) {
 		
-		return null;
+	    List <String> largestFamily = new ArrayList<String>();
+        String largestFamilyKey=null;
+        for(String key:map.keySet()){
+            int size = map.get(key).size();
+            if (size > largestFamily.size()){
+                largestFamily =  map.get(key);
+                largestFamilyKey = key;
+            }
+        }
+
+        for(int i=0; i<largestFamilyKey.length(); i++){
+            if(largestFamilyKey.charAt(i) != '-'){
+                break;
+            }
+            if(i == largestFamilyKey.length() - 1){
+                this.totalGuesses--;
+                wrongGuesses.add(x);
+            }
+        }
+
+        for(int i=0; i<largestFamilyKey.length(); i++){
+            if(largestFamilyKey.charAt(i)!= '-'){
+                currentString.setCharAt(i, largestFamilyKey.charAt(i));
+                letterCount++;
+            }
+        }
+
+        //recursion
+        HashSet <String> set = new HashSet<String>(largestFamily);
+        return set;
+		
+        
+        
 	}
 	
     private void importWords(){
@@ -80,8 +114,6 @@ public class CheatersHangman {
             Scanner s = new Scanner(new File(fileName));
             while(s.hasNextLine()){
                 String word = s.nextLine();
-                List<String> wordMaster = new List<String>();
-                
                 wordMaster.add(word); //add the entire dictionary to my wordMaster hashset
             }
             s.close();
@@ -115,12 +147,9 @@ public class CheatersHangman {
 		CheatersHangman game = new CheatersHangman(wordLength, totalGuesses); 
 		game.importWords();
 		
-		
-		
 	
 		String guessedLetters = new String(); //output this to console!!!!
 		//split the dictionary.txt into a wordList
-		Map<Integer, List<String>> wordList;
 		//if you can read all the words and split them into dictionaries u good
 		//iterate through a word and get a new string out of it 
 		
@@ -133,27 +162,65 @@ public class CheatersHangman {
 			 }
 		};
 		
-
-	
-		while(gameisRunning()) {
-			char inputLetter = s.next().charAt(0);
-			if(guessedLetters.indexOf(inputLetter) == -1) {
+		String wrongGuesses = new String();
+		String hangmanBoard = new String();
+		
+		for(int i = 0; i < wordLength; i++){
+			hangmanBoard += '-';
+		} 
+		
+		while(gameisRunning(game.totalGuesses)) {
+			
+			System.out.println(hangmanBoard + " Guesses Left: " + game.totalGuesses + "  " + wrongGuesses);
+	    		char inputLetter = s.next().charAt(0);
+			if(guessedLetters.indexOf(inputLetter) != -1) {
 				System.out.println("You already guessed that, please enter another letter or a guess will be charged.");
 				inputLetter = s.next().charAt(0);
 				guessedLetters += inputLetter;
 			} else {
-				guessedLetters += inputLetter;;
-			}
+                for(int i = 0; i < wordLength;i++){
+                    if(hangmanBoard.charAt(i) == inputLetter){ //check current board
+                    	System.out.println("You already guessed that, please enter another letter or a guess will be charged.");
+        				inputLetter = s.next().charAt(0);
+        				guessedLetters += inputLetter;
+                    }
+                }
+                
+                guessedLetters += inputLetter;
+                
+            }
 			
-			Map<String, List<String>> wordFamilies = getWordFamilies(guessedLetters);
-			String bestFamily = getBestFamily(); 
+			
+			
+			Map<String, List<String>> wordFamilies = getWordFamilies(guessedLetters, inputLetter);
+			String bestFamily = getBestFamily(wordFamilies, inputLetter); 
+						
+			System.out.println("");
+			
+			
 			//next update the game
+			game.totalGuesses -= 1;
+			
 			//replace the wordlist
 			
 			
-		}
-		
-		
+		    wordIterator = game.wordMaster.iterator();
+	        if(totalGuesses == 0){
+	        	System.out.println(hangmanBoard + " Guesses Left: " + totalGuesses + "  " + wrongGuesses);
+	            System.out.println("That is all folks. Try again next time.");
+	            System.out.println(wordIterator.next() + " was the correct answer.");
+	        }
+	        else{
+	        	System.out.println(hangmanBoard + " Guesses Left: " + totalGuesses + "  " + wrongGuesses);
+	            System.out.println("Congratulations! You're one smart cookie.");
+	        }
+
+	        s.close();
+	    }
 	}
+			
+			
+	
+	
 
 }
