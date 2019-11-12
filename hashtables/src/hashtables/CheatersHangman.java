@@ -18,7 +18,7 @@ public class CheatersHangman {
     int wordLength;
     int totalGuesses;
     int letterCount;
-    static HashSet <String> wordMaster = new HashSet<String>(); //contains all words in dict.
+     //contains all words in dict.
     List <String> allWords = new ArrayList<String>();
     
     
@@ -37,8 +37,8 @@ public class CheatersHangman {
 		
 		return false;
 	}
-	//(List<String> wordList, Set<Character> guessLetters) //rosens paramater suggestion
-	public static Map<String, List<String>> getWordFamilies(String guessedLetters, char x){
+	//(List<String> wordList, Set<Character> guessLetters) //rosen's parameter suggestion
+	public static Map<String, List<String>> getWordFamilies(String guessedLetters, HashSet <String> wordMaster,char x){
 		//given a word list, you will modify and replace it
 		
 		Iterator <String> wordIterator = wordMaster.iterator();
@@ -74,10 +74,10 @@ public class CheatersHangman {
 		
 	    List <String> largestFamily = new ArrayList<String>();
         String largestFamilyKey=null;
-        for(String key:map.keySet()){
-            int size = map.get(key).size();
+        for(String key:wordFamilies.keySet()){
+            int size = wordFamilies.get(key).size();
             if (size > largestFamily.size()){
-                largestFamily =  map.get(key);
+                largestFamily =  wordFamilies.get(key);
                 largestFamilyKey = key;
             }
         }
@@ -87,19 +87,20 @@ public class CheatersHangman {
                 break;
             }
             if(i == largestFamilyKey.length() - 1){
-                this.totalGuesses--;
-                wrongGuesses.add(x);
+                //totalGuesses--;
+            	
+                //wrongGuesses.add(x);
             }
         }
 
         for(int i=0; i<largestFamilyKey.length(); i++){
             if(largestFamilyKey.charAt(i)!= '-'){
-                currentString.setCharAt(i, largestFamilyKey.charAt(i));
-                letterCount++;
+              //  currentString.setCharAt(i, largestFamilyKey.charAt(i));
+                //letterCount++;
             }
         }
 
-        //recursion
+       
         HashSet <String> set = new HashSet<String>(largestFamily);
         return set;
 		
@@ -107,7 +108,8 @@ public class CheatersHangman {
         
 	}
 	
-    private void importWords(){
+    private static HashSet <String> importWords(){
+    	HashSet <String> wordMaster = new HashSet<String>(); //important
     	
         String fileName = "words.txt";
         try {
@@ -122,6 +124,7 @@ public class CheatersHangman {
             e1.printStackTrace();
         }
         
+        return wordMaster;
     }
 
 	
@@ -130,6 +133,7 @@ public class CheatersHangman {
 		//read instructions in pdf of order to ask for length and etc... Important!!
 	
 		Scanner s = new Scanner(System.in); //main input scanner
+		
 		
 		
 		// Game starts HERE
@@ -145,8 +149,7 @@ public class CheatersHangman {
 		
 		//initialize a new object (game) and initialize the wordMaster
 		CheatersHangman game = new CheatersHangman(wordLength, totalGuesses); 
-		game.importWords();
-		
+		HashSet <String> wordMaster = importWords(); //important
 	
 		String guessedLetters = new String(); //output this to console!!!!
 		//split the dictionary.txt into a wordList
@@ -155,8 +158,9 @@ public class CheatersHangman {
 		
 		//go through word master to find something
 		
-	    Iterator <String> wordIterator = game.wordMaster.iterator();
-		for(String nextItem : game.wordMaster){
+	    Iterator <String> wordIterator = wordMaster.iterator();
+		while (wordIterator.hasNext()){
+			String nextItem = wordIterator.next();
 			 if(nextItem.length() != wordLength){
 	                wordIterator.remove();
 			 }
@@ -192,19 +196,21 @@ public class CheatersHangman {
 			
 			
 			
-			Map<String, List<String>> wordFamilies = getWordFamilies(guessedLetters, inputLetter);
-			String bestFamily = getBestFamily(wordFamilies, inputLetter); 
+			Map<String, List<String>> wordFamilies = getWordFamilies(guessedLetters, wordMaster,inputLetter);
+			HashSet<String> bestFamily = getBestFamily(wordFamilies, inputLetter); 
 						
 			System.out.println("");
 			
 			
 			//next update the game
-			game.totalGuesses -= 1;
+			totalGuesses -= 1;
 			
+			
+		}
 			//replace the wordlist
 			
 			
-		    wordIterator = game.wordMaster.iterator();
+		    wordIterator = wordMaster.iterator();
 	        if(totalGuesses == 0){
 	        	System.out.println(hangmanBoard + " Guesses Left: " + totalGuesses + "  " + wrongGuesses);
 	            System.out.println("That is all folks. Try again next time.");
@@ -216,11 +222,12 @@ public class CheatersHangman {
 	        }
 
 	        s.close();
-	    }
+	    
+		
+		
+		
 	}
 			
-			
-	
-	
+
 
 }
