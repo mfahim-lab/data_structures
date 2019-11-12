@@ -38,7 +38,7 @@ public class CheatersHangman {
 		return false;
 	}
 	//(List<String> wordList, Set<Character> guessLetters) //rosen's parameter suggestion
-	public static Map<String, List<String>> getWordFamilies(String guessedLetters, HashSet <String> wordMaster,char x){
+	public Map<String, List<String>> getWordFamilies(String guessedLetters, HashSet <String> wordMaster,char x){
 		//given a word list, you will modify and replace it
 		
 		Iterator <String> wordIterator = wordMaster.iterator();
@@ -70,7 +70,7 @@ public class CheatersHangman {
 	    return map;
 	}
 	
-	public static HashSet <String> getBestFamily(Map<String, List<String>> wordFamilies, char x) {
+	public void getBestFamily(Map<String, List<String>> wordFamilies, char x) {
 		
 	    List <String> largestFamily = new ArrayList<String>();
         String largestFamilyKey=null;
@@ -108,7 +108,7 @@ public class CheatersHangman {
         
 	}
 	
-    private static HashSet <String> importWords(){
+    private HashSet <String> importWords(){
     	HashSet <String> wordMaster = new HashSet<String>(); //important
     	
         String fileName = "words.txt";
@@ -174,7 +174,7 @@ public class CheatersHangman {
 		} 
 		
 		while(gameisRunning(game.totalGuesses)) {
-			
+				totalGuesses--;
 			System.out.println(hangmanBoard + " Guesses Left: " + game.totalGuesses + "  " + wrongGuesses);
 	    		char inputLetter = s.next().charAt(0);
 			if(guessedLetters.indexOf(inputLetter) != -1) {
@@ -203,7 +203,7 @@ public class CheatersHangman {
 			
 			
 			//next update the game
-			totalGuesses -= 1;
+			
 			
 			
 		}
