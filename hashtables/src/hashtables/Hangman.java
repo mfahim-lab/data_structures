@@ -59,7 +59,7 @@ public class Hangman {
 		// given a word list, you will modify and replace it
 
 		Iterator<String> wordIterator = wordMaster.iterator();
-		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+//		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 
 		/*
 		for (int i = 0; i < hangmanboard.length(); i++) {
@@ -70,13 +70,16 @@ public class Hangman {
 		} // end for
 	    */
 
+		
+		
 		for (String word : wordMaster) { // for every word of same length in the list
 			//choosesfamily by location of char
 			word = wordIterator.next();
 			String family = word;
-
 			
-
+//they key is _e_ or_a_e 
+//next time do samething but w new wordmaster w only es
+			
 			if (!map.containsKey(family)) {
 				List<String> list = new ArrayList<String>();
 				map.put(family, list);
