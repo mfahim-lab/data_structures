@@ -51,6 +51,24 @@ public class SetsandMaps {
 	   */
 	
 	
+	  
+	  
+	  /*
+	   * New Sorting Algorithm from Rosen
+	   * Rudix Sort 
+	   * 0(Wn) O time where W is the number of digits you have 
+	   * bc theres no comparasion just throw by significant digit
+	   * 
+	   * 
+	   * Queues are sorted by the least significant digit
+	   * for example is three digit values 333, 123, 206, 029, 093, 902, etc you group all 
+	   * that end with three togethor 333, 123, 093, etc...  you can sort by any of the siginificant digits 
+	   * 
+	   * 
+	   */
+	  
+	  
+	  
 	public static void main(String[] args) {
 		
 		
